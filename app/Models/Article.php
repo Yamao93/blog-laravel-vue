@@ -12,13 +12,15 @@ class Article extends Model
 
     protected $fillable = ['title', 'body', 'img', 'slug'];
 
-//    protected $quarded = [];
+//    public $dates = ['published_at'];
 
-    public function comments(){
+//    protected $guarded = [];
+
+    public function comments() {
         return $this->hasMany(Comment::class);
     }
 
-    public function state(){
+    public function state() {
         return $this->hasOne(State::class);
     }
 
@@ -39,20 +41,19 @@ class Article extends Model
     {
         return $query->with('tags', 'state')->orderBy('created_at', 'desc')->limit($numbers)->get();
     }
-//
-//    public function scopeAllPaginate($query, $numbers)
-//    {
-//        return $query->with('tags', 'state')->orderBy('created_at', 'desc')->paginate($numbers);
-//    }
-//
-//    public function scopeFindBySlug($query, $slug)
-//    {
-//        return $query->with('comments','tags', 'state')->where('slug', $slug)->firstOrFail();
-//    }
-//
-//    public function scopeFindByTag($query)
-//    {
-//        return $query->with('tags', 'state')->orderBy('created_at', 'desc')->paginate(10);
-//    }
 
+    public function scopeAllPaginate($query, $numbers)
+    {
+        return $query->with('tags', 'state')->orderBy('created_at', 'desc')->paginate($numbers);
+    }
+
+    public function scopeFindBySlug($query, $slug)
+    {
+        return $query->with('comments','tags', 'state')->where('slug', $slug)->firstOrFail();
+    }
+
+    public function scopeFindByTag($query)
+    {
+        return $query->with('tags', 'state')->orderBy('created_at', 'desc')->paginate(10);
+    }
 }
