@@ -4,30 +4,64 @@ import Vuex from 'vuex'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    state:{
-        firstname: 'Jon',
-        lastname: 'Jayson'
+    state: {
+        article: {
+            comments: [],
+            tags: [],
+            statistic: {
+                likes: 0,
+                views: 0
+            }
+        },
+        slug:'',
+        likeIt: true
 
     },
     actions: {
-        testAction(context,payload){
-            context.commit('SET_FIRSTNAME', response.data.name)
-            context.commit('SET_ LASTNAME', response.data.lastname)
-        }
+        getArticleData(context, payload) {
+            axios.get('/api/article-json', {params: {'slug':payload}}).then((response) => {
+                context.commit('SET_ARTICLE', response.data.data);
+            }).catch(() => {
+                console.log('Error');
+            })
+        },
+        viewsIncrement(context,payload){
+            setTimeout(()=>{
+                axios.put('/api/article-views-increment', {slug:payload}).then((response) =>{
+                    context.commit('SET_ARTICLE', response.data.data);
+                }).catch(() => {
+                    console.log('Ошибка');
+                });
+            }, 5000)
+        },
+        addLike(context,payload){
+            axios.put('/api/article-likes-increment', {slug:payload.slug, increment:payload.increment})
+                .then((response) =>{
+                    context.commit('SET_ARTICLE', response.data.data)
+                    context.commit('SET_LIKE', !context.state.likeIt)
+                }).catch(()=>{
+                    console.log('Ошибка addLike')
+            });
+            console.log('Kлик по кнопке', context.state.likeIt);
+        },
     },
     getters: {
-        getFullName(state){
-            return state.firstname + ' ' + state.lastname;
+        articleViews(state) {
+                return state.article.statistic.views;
+        },
+        articleLikes(state) {
+                return state.article.statistic.likes;
         }
     },
     mutations: {
-        SET_FIRSTNAME(state, payload)
-        {
-            state.firstname = payload;
+        SET_ARTICLE(state, payload) {
+            return state.article = payload;
         },
-        SET_LASTNAME(state, payload)
-        {
-            state.lastname = payload;
+        SET_SLUG(state,payload){
+            return state.slug = payload;
+        },
+        SET_LIKE(state,payload){
+            return state.likeIt = payload;
         }
     }
 })
