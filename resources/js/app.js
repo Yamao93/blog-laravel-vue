@@ -12,6 +12,7 @@ import  store  from './store/index.js';
 Vue.component('article-component', require('./components/ArticleComponent.vue').default);
 Vue.component('views-increment', require('./components/ViewsComponent.vue').default);
 Vue.component('likes-increment', require('./components/LikesComponent.vue').default);
+Vue.component('comments-component', require('./components/CommentComponent.vue').default);
 
 
 
@@ -25,8 +26,8 @@ const app = new Vue({
         console.log(url)
         console.log(slug)
         this.$store.commit('SET_SLUG', slug)
-        this.$store.dispatch('getArticleData',slug)
-        this.$store.dispatch('viewsIncrement',slug)
+        this.$store.dispatch('article/getArticleData',slug)
+        this.$store.dispatch('article/viewsIncrement',slug)
     }
 
 
